@@ -1,0 +1,35 @@
+# {{ name }} ({{ role }}) — inventory/site.yml 에서 생성
+# bond 링크 두 줄은 같은 랙의 리프 a/b에 하나씩 꽂혀 있다 (리프 쪽은 EVPN ESI-LAG)
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+{% for b in bonds %}
+{% for n in b.nics %}
+    {{ n }}: {mtu: {{ b.mtu }}}
+{% endfor %}
+{% endfor %}
+  bonds:
+{% for b in bonds %}
+    {{ b.name }}:
+      interfaces: [{{ b.nics | join(', ') }}]
+      mtu: {{ b.mtu }}
+      parameters:
+        mode: 802.3ad
+        lacp-rate: fast
+        transmit-hash-policy: layer3+4
+        mii-monitor-interval: 100
+{% endfor %}
+  vlans:
+{% for b in bonds %}
+{% for v in b.vlans %}
+    {{ b.name }}.{{ v.id }}:            # {{ v.name }}
+      id: {{ v.id }}
+      link: {{ b.name }}
+      mtu: {{ v.mtu }}
+      addresses: [{{ v.addr }}]
+{% if v.id == default_vlan %}
+      routes: [{to: default, via: {{ v.gw }}}]
+{% endif %}
+{% endfor %}
+{% endfor %}

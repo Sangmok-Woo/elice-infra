@@ -1,0 +1,110 @@
+# 사이트 원장 (Source of Truth)
+# 랙, 장비, 서버, 배선, VLAN, VRF, IP 대역을 이 파일 하나에 적는다.
+# 설정 파일, IP 표, 배선표, NetBox 입력 데이터, 랩 토폴로지는 전부 여기서 생성한다.
+
+site:
+  name: elice-dc1
+  asn_base:
+    spine: 65100          # 스파인은 같은 AS (스파인끼리 경로를 주고받지 않게)
+    leaf: 65110           # 리프는 65111, 65112 ... (리프마다 다른 AS)
+    k8s: 65200            # Kubernetes BGP 스피커(Cilium/MetalLB)
+  rt_admin: 65000         # EVPN route-target 공통값. eBGP 패브릭에서 자동 RT는 리프마다 달라진다
+  anycast_gw_mac: "00:00:5e:00:01:01"
+  mtu:
+    fabric: 9216
+    storage: 9000
+    front: 1500
+
+racks:
+  - {name: R1, u: 42, power_kw: 8, feeds: [A, B]}
+  - {name: R2, u: 42, power_kw: 8, feeds: [A, B]}
+  - {name: R3, u: 42, power_kw: 8, feeds: [A, B]}
+
+prefixes:
+  site:          10.10.0.0/16
+  loopback:      10.10.0.0/24     # 라우터 ID
+  vtep:          10.10.1.0/24     # VXLAN 터널 출발지
+  oob_net:       10.10.8.0/24     # 스위치/방화벽 관리 포트
+  oob_bmc:       10.10.9.0/24     # 서버 BMC(IPMI)
+  mgmt_svc:      10.10.10.0/24    # NetBox, Prometheus, 배스천
+  fw_transit:    10.10.250.0/24   # VRF별 방화벽 연결 /29
+  pod:           10.20.0.0/16     # Kubernetes Pod (노드당 /24)
+  service:       10.21.0.0/16     # Kubernetes Service (클러스터 내부 전용)
+  lb_vip:        10.10.32.0/24    # LoadBalancer VIP (BGP로 광고)
+  public:        203.0.113.0/28   # ISP 할당 공인 대역 (문서용 예시 대역)
+  reserved_gpu:  10.10.64.0/18    # GPU 노드 프론트엔드 (예약)
+  reserved_gpu_backend: 10.30.0.0/16  # GPU 간 RoCE 백엔드 (예약, 별도 패브릭)
+
+vrfs:
+  - {name: PROD,    table: 10, l3vni: 50010, desc: "Kubernetes 노드, 서비스 VIP"}
+  - {name: STORAGE, table: 20, l3vni: 50020, desc: "Ceph public (클라이언트 접근)"}
+  - {name: REPL,    table: 30, l3vni: 50030, desc: "Ceph cluster (복제 전용, 외부 경로 없음)"}
+
+vlans:
+  - {id: 110, name: K8S-NODE,     vrf: PROD,    prefix: 10.10.16.0/24, mtu: 1500}
+  - {id: 120, name: CEPH-PUBLIC,  vrf: STORAGE, prefix: 10.10.20.0/24, mtu: 9000}
+  - {id: 130, name: CEPH-CLUSTER, vrf: REPL,    prefix: 10.10.24.0/24, mtu: 9000}
+
+# 방화벽 내부 다리. 경계 리프의 VRF마다 /29 하나. 방화벽 .1, 리프 a .2, 리프 b .3
+fw_transit:
+  - {vrf: PROD,    vlan: 901, prefix: 10.10.250.0/29}
+  - {vrf: STORAGE, vlan: 902, prefix: 10.10.250.8/29}
+  # REPL은 방화벽과 연결하지 않는다 (복제망은 밖으로 나갈 일이 없다)
+
+switches:
+  - {name: spine1,  role: spine, rack: R1, model: "32x100G",         idx: 1}
+  - {name: spine2,  role: spine, rack: R3, model: "32x100G",         idx: 2}
+  - {name: leaf1a,  role: leaf,  rack: R1, model: "48x25G+8x100G",   idx: 1, border: true}
+  - {name: leaf1b,  role: leaf,  rack: R1, model: "48x25G+8x100G",   idx: 2, border: true}
+  - {name: leaf2a,  role: leaf,  rack: R2, model: "48x25G+8x100G",   idx: 3, border: true}
+  - {name: leaf2b,  role: leaf,  rack: R2, model: "48x25G+8x100G",   idx: 4, border: true}
+  - {name: leaf3a,  role: leaf,  rack: R3, model: "48x25G+8x100G",   idx: 5}
+  - {name: leaf3b,  role: leaf,  rack: R3, model: "48x25G+8x100G",   idx: 6}
+  - {name: oob1,    role: oob,   rack: R1, model: "48x1G+4x10G",     idx: 1}
+  - {name: oob2,    role: oob,   rack: R2, model: "48x1G+4x10G",     idx: 2}
+  - {name: oob3,    role: oob,   rack: R3, model: "48x1G+4x10G",     idx: 3}
+
+firewalls:
+  - {name: fw1, rack: R1, model: "NGFW (HA active)",  border_leaves: [leaf1a, leaf1b]}
+  - {name: fw2, rack: R2, model: "NGFW (HA standby)", border_leaves: [leaf2a, leaf2b]}
+
+# 서버 NIC 묶음. 각 bond는 같은 랙의 리프 a/b에 한 줄씩 (ESI-LAG, LACP)
+nic_profiles:
+  controller:
+    - {bond: bond0, speed: 25, links: 2, vlans: [110, 120]}
+  worker:
+    - {bond: bond0, speed: 25, links: 2, vlans: [110]}
+    - {bond: bond1, speed: 25, links: 2, vlans: [120]}
+  ceph:
+    - {bond: bond0, speed: 25, links: 2, vlans: [120]}
+    - {bond: bond1, speed: 25, links: 2, vlans: [130]}
+
+servers:
+  - {name: ctrl1, role: controller, rack: R1, host: 11}
+  - {name: ctrl2, role: controller, rack: R2, host: 12}
+  - {name: ctrl3, role: controller, rack: R3, host: 13}
+  - {name: wrk1,  role: worker,     rack: R1, host: 21}
+  - {name: wrk2,  role: worker,     rack: R1, host: 22}
+  - {name: wrk3,  role: worker,     rack: R2, host: 23}
+  - {name: wrk4,  role: worker,     rack: R2, host: 24}
+  - {name: wrk5,  role: worker,     rack: R3, host: 25}
+  - {name: ceph1, role: ceph,       rack: R1, host: 31}
+  - {name: ceph2, role: ceph,       rack: R1, host: 32}
+  - {name: ceph3, role: ceph,       rack: R2, host: 33}
+  - {name: ceph4, role: ceph,       rack: R3, host: 34}
+
+# 서비스 노출: Ingress가 떠 있는 워커가 VIP를 BGP로 리프에 광고한다 (Cilium/MetalLB BGP 모드)
+# 서로 다른 랙에 두어 한 랙이 죽어도 VIP가 살아 있게 한다
+services:
+  web_vip: 10.10.32.10
+  ingress_nodes: [wrk3, wrk5]
+
+# 서버 주소 끝자리 규칙. .100~.199는 확장 예약
+host_ranges:
+  controller: [11, 19]
+  worker: [21, 29]
+  ceph: [31, 39]
+
+# 리프-스파인 업링크: 리프마다 스파인 하나당 100G 1줄로 시작, 사용률 50% 넘으면 2줄로
+uplinks_per_spine: 1
+uplink_speed: 100

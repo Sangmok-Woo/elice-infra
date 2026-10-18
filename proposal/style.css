@@ -1,0 +1,236 @@
+
+/* 포트폴리오(portfolio3.html)와 같은 에디토리얼 체계 — Pretendard, 헤어라인, 좌측 라벨 컬럼, 코발트 단일 액센트 */
+:root {
+  --ink: #191d24;
+  --body: #333a45;
+  --faint: #8a919c;
+  --hairline: #e3e6ea;
+  --accent: #2b50e0;
+  --ok: #1f9d55;
+  --warn: #d98a1c;
+  --bad: #d6364f;
+  --paper: #ffffff;
+  --code-bg: #f5f6f8;
+}
+@page {
+  size: A4;
+  margin: 17mm 14mm 15mm 14mm;
+  @top-left { content: "우상목 — 데이터센터 네트워크 제안서"; font-family: 'Pretendard', sans-serif; font-size: 7.4pt; font-weight: 700; letter-spacing: 0.12em; color: #191d24; vertical-align: bottom; padding-bottom: 3mm; }
+  @top-right { content: counter(page, decimal-leading-zero) " / " counter(pages, decimal-leading-zero); font-family: 'Pretendard', sans-serif; font-size: 7.4pt; letter-spacing: 0.12em; color: #8a919c; vertical-align: bottom; padding-bottom: 3mm; }
+  @bottom-left { content: "ELICE · MINI PROJECT"; font-family: 'Pretendard', sans-serif; font-size: 7pt; letter-spacing: 0.14em; color: #8a919c; vertical-align: top; padding-top: 3mm; }
+  @bottom-right { content: "elice-infra/"; font-family: 'Pretendard', sans-serif; font-size: 7pt; font-weight: 600; color: #2b50e0; vertical-align: top; padding-top: 3mm; }
+}
+@page :first {
+  @top-left { content: none; }
+  @top-right { content: none; }
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: var(--paper); }
+body {
+  font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+  color: var(--ink);
+  font-size: 8.8pt; line-height: 1.62; font-feature-settings: 'tnum';
+  word-break: keep-all; overflow-wrap: break-word;
+}
+
+/* ===== cover ===== */
+.cover { padding-top: 4mm; }
+.cover-kicker { font-size: 8pt; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+.cover h1 { font-size: 26pt; font-weight: 800; letter-spacing: -0.03em; line-height: 1.22; margin-top: 3mm; }
+.cover h1 .dot { color: var(--accent); }
+.cover .sub { margin-top: 4mm; font-size: 9.8pt; color: #4a515c; max-width: 165mm; line-height: 1.85; }
+.cover .sub b { color: var(--ink); font-weight: 700; }
+.cover .meta { margin-top: 4mm; font-size: 8.3pt; color: var(--faint); }
+.cover .meta b { color: var(--ink); font-weight: 600; }
+.cover .meta .ln { color: var(--accent); font-weight: 600; }
+.cover-rule { border: none; border-top: 1.5px solid var(--ink); margin: 5mm 0 0 0; }
+.cover + section { border-top: none; margin-top: 0; }
+
+.toc { display: grid; grid-template-columns: 30mm 1fr; gap: 0 7mm; padding: 5mm 0 1mm; }
+.toc-label { font-size: 7.8pt; font-weight: 700; letter-spacing: 0.14em; color: var(--faint); padding-top: 0.6mm; }
+.toc ol { list-style: none; columns: 3; column-gap: 6mm; font-size: 8.6pt; line-height: 2; color: var(--body); }
+.toc li span { display: inline-block; width: 7mm; font-weight: 700; color: var(--accent); font-size: 7.8pt; }
+
+/* ===== section grid ===== */
+section { display: grid; grid-template-columns: 25mm 1fr; gap: 0 6mm; padding-top: 7mm; margin-top: 7mm; border-top: 1px solid var(--hairline); }
+.sec-label { font-size: 7.6pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); padding-top: 0.6mm; line-height: 1.5; }
+.sec-label .no { display: block; font-size: 8pt; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 1.2mm; }
+.sec-label b { display: block; font-size: 11.5pt; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); text-transform: none; margin-bottom: 1.6mm; line-height: 1.3; }
+.sec-label .ref { display: block; margin-top: 2mm; font-size: 7.2pt; letter-spacing: 0.02em; text-transform: none; color: var(--accent); font-weight: 600; line-height: 1.5; word-break: break-all; }
+.sec-body { min-width: 0; grid-column: 2; }
+.sec-head { grid-column: 1 / -1; display: grid; grid-template-columns: 25mm 1fr; gap: 0 6mm; break-inside: avoid; }
+.sec-head .sec-label { grid-column: 1; grid-row: 1; }
+.sec-head .sec-body { grid-column: 2; grid-row: 1; }
+section { margin-top: 4.5mm; padding-top: 4.5mm; }
+
+h3 { font-size: 10.2pt; font-weight: 700; letter-spacing: -0.015em; margin: 3.8mm 0 1.4mm; break-after: avoid; }
+.sec-body > h3:first-child { margin-top: 0; }
+p { color: var(--body); margin-bottom: 2.6mm; }
+p b, li b, td b { font-weight: 700; color: var(--ink); }
+code, .mono { font-family: 'JetBrains Mono', 'Consolas', 'Pretendard', monospace; font-size: 8pt; background: var(--code-bg); border: 1px solid var(--hairline); border-radius: 1mm; padding: 0 1mm; color: #2a313b; }
+td.mono { background: none; border-left: none; border-right: none; border-top: none; border-radius: 0; padding: 2.1mm 2mm 2.1mm 0; }
+.small { font-size: 8pt; color: var(--faint); line-height: 1.7; }
+
+ul.pts, ol { margin: 1.6mm 0 3.4mm 0; }
+ul.pts { list-style: none; }
+ul.pts li { position: relative; padding-left: 4.2mm; margin-bottom: 1.4mm; color: var(--body); line-height: 1.7; }
+ul.pts li::before { content: ""; position: absolute; left: 0.6mm; top: 0.68em; width: 1.2mm; height: 1.2mm; background: var(--accent); border-radius: 50%; }
+ol { padding-left: 5mm; }
+ol li { margin-bottom: 1.4mm; color: var(--body); line-height: 1.7; padding-left: 1mm; }
+ol li::marker { color: var(--accent); font-weight: 700; }
+
+/* tables */
+table.data { width: 100%; border-collapse: collapse; margin: 2mm 0 3.4mm 0; }
+table.data tr { break-inside: avoid; }
+table.data th { text-align: left; font-size: 7.6pt; font-weight: 700; letter-spacing: 0.04em; color: var(--faint); padding: 1.4mm 2.4mm 1.4mm 0; border-bottom: 1px solid var(--ink); vertical-align: bottom; background: none; }
+table.data td { font-size: 8.1pt; padding: 1.05mm 2.4mm 1.05mm 0; border-bottom: 1px solid var(--hairline); color: var(--body); vertical-align: top; line-height: 1.6; }
+table.data tr:last-child td { border-bottom: none; }
+table.data th.num, table.data td.num { text-align: right; white-space: nowrap; padding-right: 0; }
+.hit { font-weight: 800; color: var(--accent); }
+.hit.ok { color: var(--ok); }
+.pass { color: var(--ok); font-weight: 800; }
+
+/* code */
+pre.term { background: var(--code-bg); border: 1px solid var(--hairline); border-radius: 1.5mm; padding: 3.4mm 3.8mm; font-family: 'JetBrains Mono', 'Consolas', 'Pretendard', monospace; font-size: 7.4pt; line-height: 1.7; color: #2a313b; white-space: pre-wrap; margin: 2.4mm 0 4mm 0; break-inside: avoid; }
+
+/* callout */
+.note { background: #f6f8ff; border: 1px solid #dfe5fb; border-radius: 1.5mm; padding: 2.6mm 3.4mm; margin: 2.4mm 0 3mm; color: var(--body); line-height: 1.8; break-inside: avoid; }
+.note b { color: var(--ink); }
+.note.warn { background: #fff8ef; border-color: #f6e3c4; }
+.note.ok { background: #f2fbf5; border-color: #cfeedd; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+.grid2 .note { margin: 0; }
+
+/* figures: 라벨 칸까지 넓게 써서 그림 글자가 작아지지 않게 */
+figure { margin: 4mm 0 5mm; break-inside: avoid; }
+figure.wide { grid-column: 1 / -1; margin: 3mm 0 4mm; }
+figure svg text { font-family: 'Pretendard', sans-serif; }
+figcaption { margin-top: 2mm; font-size: 7.8pt; color: var(--faint); line-height: 1.5; text-align: left; }
+
+
+
+figure.wide svg { display: block; margin: 0 auto; }
+figure.s80 svg { width: 72% !important; }
+figure.s90 svg { width: 88% !important; }
+figure.s70 svg { width: 64% !important; }
+figure.wide figcaption { margin-left: 31mm; }
+
+
+.sec-head figure.wide { grid-column: 1 / -1; grid-row: 2; }
+
+/* 4장: 그림 2의 번호와 같은 동그라미 */
+ol.steps { list-style: none; counter-reset: st; padding-left: 0; }
+ol.steps li { counter-increment: st; position: relative; padding-left: 8mm; margin-bottom: 2.2mm; }
+ol.steps li::before { content: counter(st); position: absolute; left: 0; top: 0.15em; width: 5mm; height: 5mm; border-radius: 50%; background: var(--accent); color: #fff; font-size: 7.6pt; font-weight: 800; text-align: center; line-height: 5mm; }
+ol.steps li:nth-child(3)::before { background: #7a5cd6; }
+ol.steps li:nth-child(4)::before { background: #4c3a99; }
+ol.steps li:nth-child(5)::before { background: #d98a1c; }
+ol.steps li:nth-child(6)::before { background: #8a919c; }
+
+/* 부록은 새 쪽에서, 라벨은 회색 */
+section.appendix .sec-label .no { color: var(--faint); }
+
+table.data th.num, table.data td.num { padding-right: 4mm; }
+table.data th.num:last-child, table.data td.num:last-child { padding-right: 0; }
+
+/* ===== 흐름판: 여유 있는 간격 ===== */
+@page { margin: 19mm 17mm 18mm 17mm; }
+body { font-size: 9.4pt; line-height: 1.85; }
+section { grid-template-columns: 32mm 1fr; gap: 0 8mm; margin-top: 9mm; padding-top: 8mm; }
+.sec-head { grid-template-columns: 32mm 1fr; gap: 0 8mm; }
+.sec-label b { font-size: 12pt; line-height: 1.35; }
+h3 { font-size: 10.6pt; margin: 7mm 0 2.6mm; }
+p { margin-bottom: 3.4mm; }
+table.data { margin: 3mm 0 5mm 0; }
+table.data td { font-size: 8.7pt; padding: 2mm 3mm 2mm 0; line-height: 1.7; }
+ul.pts li { margin-bottom: 2.2mm; line-height: 1.8; }
+.note { padding: 4mm 4.6mm; margin: 4mm 0 5mm; line-height: 1.85; }
+figure.wide { margin: 5mm 0 6mm; }
+figure.wide figcaption { margin-left: 40mm; }
+.cover .sub { margin-top: 4.5mm; font-size: 10pt; line-height: 1.9; max-width: 170mm; }
+section.newpage { break-before: page; border-top: none; margin-top: 0; padding-top: 0; }
+.cover + section { border-top: none; margin-top: 2mm; }
+
+/* 흐름 라벨 아래 랩 확인 */
+.sec-label .lab { display: block; margin-top: 2.4mm; font-size: 7.2pt; letter-spacing: 0.01em; text-transform: none; color: var(--ok); font-weight: 600; line-height: 1.55; }
+section.appendix .sec-label .no { color: var(--faint); }
+
+/* 구간 번호 동그라미 (흐름 색) */
+table.hops td.hop { width: 7mm; padding-right: 2mm; }
+table.hops td.hop { font-size: 0; }
+table.hops td.hop::before { display: inline-block; width: 5.2mm; height: 5.2mm; border-radius: 50%; color: #fff; font-size: 7.6pt; font-weight: 800; text-align: center; line-height: 5.2mm; }
+table.hops td.hop::before { content: attr(data-n); }
+table.hops td.h1::before { background: #e8590c; }
+table.hops td.h2::before { background: #7a5cd6; }
+table.hops td.h3::before { background: #4c3a99; }
+table.hops td.h4::before { background: #8a919c; }
+table.hops td.h7::before { background: #d98a1c; }
+
+/* PART 구분 */
+.part { break-before: page; padding: 2mm 0 6mm; margin-bottom: 4mm; border-bottom: 1.5px solid var(--ink); font-size: 20pt; font-weight: 800; letter-spacing: -0.02em; line-height: 1.3; }
+.part span { display: block; font-size: 8pt; font-weight: 700; letter-spacing: 0.18em; color: var(--accent); margin-bottom: 2mm; }
+.part em { display: block; font-style: normal; font-size: 9.6pt; font-weight: 400; color: #4a515c; letter-spacing: 0; margin-top: 2mm; }
+section.first { border-top: none; margin-top: 0; padding-top: 2mm; }
+.note ul.pts { margin-top: 2mm; }
+.note ul.pts li { margin-bottom: 1.4mm; }
+
+/* 서버 × 망 주소표 */
+table.addr th .sub { display: block; font-size: 6.9pt; font-weight: 500; letter-spacing: 0.02em; color: var(--faint); margin-top: 0.6mm; }
+table.addr td.none { color: #c4cad3; }
+table.addr td, section.first table.data td { padding-top: 1.5mm; padding-bottom: 1.5mm; }
+
+/* 랩 캡처 이미지 */
+figure.shot { margin: 4mm 0 5mm; }
+figure.shot img { display: block; width: 100%; border: 1px solid var(--hairline); border-radius: 1.5mm; }
+figure.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin: 4mm 0 5mm; break-inside: avoid; }
+figure.pair img { display: block; width: 100%; border: 1px solid var(--hairline); border-radius: 1.5mm; }
+figure.pair figcaption { grid-column: 1 / -1; }
+figure.wide figcaption { margin-left: 40mm; }
+figure.shot.w85 img { width: 85%; margin: 0 auto; }
+figure.shot.w70 img { width: 70%; margin: 0 auto; }
+figure.pair { width: 88%; margin-left: auto; margin-right: auto; }
+/* 장 끝 여백이 빈 쪽을 만들지 않게 */
+section > .sec-body:last-child > :last-child { margin-bottom: 0; }
+section { padding-bottom: 0; }
+section.first figure.wide { margin: 3mm 0 3.5mm; }
+section.first table.data td { padding-top: 1.1mm; padding-bottom: 1.1mm; }
+section.first table.data { margin: 2mm 0 3mm; }
+
+/* 요약: 세 파트 카드, 한눈에 표 */
+.parts3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 4mm 0 6mm; }
+.parts3 > div { border: 1px solid var(--hairline); border-top: 2px solid var(--accent); border-radius: 1.5mm; padding: 3.2mm 3.6mm; font-size: 8.6pt; line-height: 1.7; color: var(--body); }
+.parts3 span { display: block; font-size: 7.2pt; font-weight: 700; letter-spacing: 0.14em; color: var(--accent); }
+.parts3 b { display: block; font-size: 10.4pt; font-weight: 800; color: var(--ink); margin: 0.6mm 0 1.4mm; }
+table.glance td:first-child { width: 17%; font-weight: 700; color: var(--ink); white-space: nowrap; }
+table.glance td { padding-top: 1.3mm; padding-bottom: 1.3mm; line-height: 1.6; }
+.parts3 { margin: 3mm 0 4mm; }
+.parts3 > div { padding: 2.6mm 3.2mm; line-height: 1.6; }
+
+/* 요약: 세 단계 흐름 (느슨하게) */
+.flow3 { margin: 8mm 0 2mm; }
+.flow3 .step { position: relative; padding: 0 0 7mm 9mm; border-left: 2px solid #dfe5fb; margin-left: 2mm; }
+.flow3 .step:last-child { border-left-color: transparent; padding-bottom: 0; }
+.flow3 .step::before { content: ""; position: absolute; left: -2.2mm; top: 0.4mm; width: 3.6mm; height: 3.6mm; border-radius: 50%; background: var(--accent); }
+.flow3 span { display: block; font-size: 7.4pt; font-weight: 700; letter-spacing: 0.16em; color: var(--accent); line-height: 1.2; }
+.flow3 b { display: block; font-size: 13pt; font-weight: 800; color: var(--ink); margin: 1.2mm 0 1.4mm; letter-spacing: -0.02em; }
+.flow3 p { margin: 0; color: #4a515c; font-size: 9.6pt; line-height: 1.8; }
+
+/* ===== 숨 쉴 공간 정리 ===== */
+/* 새 쪽에서 시작하는 장은 머리말과 붙지 않게 위 여백 */
+section.newpage { padding-top: 7mm; }
+/* 장의 첫 문단은 도입문: 조금 크고 진하게, 아래 여백 넉넉히 */
+section .sec-head .sec-body > p:first-child { font-size: 10pt; line-height: 1.9; color: var(--ink); margin-bottom: 5mm; }
+/* 문단 사이 간격 */
+.sec-body p { margin-bottom: 4.2mm; }
+/* 소제목 위아래 */
+h3 { margin: 9mm 0 3mm; }
+.sec-body > h3:first-child { margin-top: 2mm; }
+/* 작은 표는 쪽 사이에서 쪼개지지 않게 (구간 표는 길어서 예외) */
+table.data:not(.hops) { break-inside: avoid; }
+table.data { margin: 3.5mm 0 6mm 0; }
+/* 그림 위아래 여유 */
+figure.shot, figure.pair { margin: 6mm auto 7mm; }
+/* 토폴로지 쪽은 그림+주소표 두 개가 한 쪽에 들어가야 해서 촘촘하게 유지 */
+section.first .sec-head .sec-body > p:first-child { font-size: 9.4pt; line-height: 1.8; margin-bottom: 3mm; }
+section.first table.data { margin: 2mm 0 3mm; }
+section.first .sec-body p { margin-bottom: 2.4mm; }

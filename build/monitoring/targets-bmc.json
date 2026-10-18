@@ -1,0 +1,98 @@
+[
+  {
+    "targets": [
+      "10.10.9.11"
+    ],
+    "labels": {
+      "node": "ctrl1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.12"
+    ],
+    "labels": {
+      "node": "ctrl2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.13"
+    ],
+    "labels": {
+      "node": "ctrl3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.21"
+    ],
+    "labels": {
+      "node": "wrk1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.22"
+    ],
+    "labels": {
+      "node": "wrk2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.23"
+    ],
+    "labels": {
+      "node": "wrk3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.24"
+    ],
+    "labels": {
+      "node": "wrk4"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.25"
+    ],
+    "labels": {
+      "node": "wrk5"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.31"
+    ],
+    "labels": {
+      "node": "ceph1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.32"
+    ],
+    "labels": {
+      "node": "ceph2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.33"
+    ],
+    "labels": {
+      "node": "ceph3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.9.34"
+    ],
+    "labels": {
+      "node": "ceph4"
+    }
+  }
+]

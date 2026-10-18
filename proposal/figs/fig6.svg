@@ -1,0 +1,66 @@
+<svg viewBox="0 0 1000 330" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="aw" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#2b50e0"/></marker>
+    <marker id="as" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#7a5cd6"/></marker>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#4c3a99"/></marker>
+    <marker id="am" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#8a919c"/></marker>
+    <style>
+      .bx{font-size:14px;font-weight:700;fill:#fff;text-anchor:middle}
+      .sb{font-size:11px;fill:#fff;text-anchor:middle;opacity:.9}
+      .num{font-size:12px;font-weight:800;fill:#fff;text-anchor:middle}
+      .lb{font-size:11.5px;fill:#333a45;text-anchor:middle}
+      .lg{font-size:11px;fill:#333a45}
+    </style>
+  </defs>
+
+  <!-- 범례 -->
+  <g>
+    <line x1="20" y1="18" x2="44" y2="18" stroke="#2b50e0" stroke-width="3"/><text class="lg" x="50" y="22">웹 요청</text>
+    <line x1="120" y1="18" x2="144" y2="18" stroke="#7a5cd6" stroke-width="3"/><text class="lg" x="150" y="22">스토리지 I/O</text>
+    <line x1="248" y1="18" x2="272" y2="18" stroke="#4c3a99" stroke-width="3"/><text class="lg" x="278" y="22">복제</text>
+    <line x1="330" y1="18" x2="354" y2="18" stroke="#8a919c" stroke-width="2.5" stroke-dasharray="6 4"/><text class="lg" x="360" y="22">관리 (물리적으로 다른 망)</text>
+  </g>
+
+  <!-- 주 경로 상자 -->
+  <rect x="20" y="88" width="112" height="58" rx="8" fill="#5d6878"/><text class="bx" x="76" y="113">사용자</text><text class="sb" x="76" y="132">인터넷</text>
+  <rect x="190" y="88" width="128" height="58" rx="8" fill="#d6364f"/><text class="bx" x="254" y="113">방화벽 HA</text><text class="sb" x="254" y="132">공인 IP → VIP</text>
+  <rect x="376" y="88" width="150" height="58" rx="8" fill="#149a86"/><text class="bx" x="451" y="113">리프 · 스파인</text><text class="sb" x="451" y="132">랙 사이를 잇는 패브릭</text>
+  <rect x="584" y="88" width="138" height="58" rx="8" fill="#3d4756"/><text class="bx" x="653" y="113">워커 (Ingress)</text><text class="sb" x="653" y="132">VIP를 BGP로 광고</text>
+  <rect x="790" y="88" width="88" height="58" rx="8" fill="#7a5cd6"/><text class="bx" x="834" y="113">Ceph</text><text class="sb" x="834" y="132">받은 노드</text>
+  <rect x="902" y="88" width="80" height="58" rx="8" fill="#4c3a99"/><text class="bx" x="942" y="113">Ceph ×2</text><text class="sb" x="942" y="132">복제본</text>
+
+  <!-- ① ② 웹 요청 -->
+  <line x1="132" y1="117" x2="186" y2="117" stroke="#2b50e0" stroke-width="3" marker-end="url(#aw)"/>
+  <line x1="318" y1="117" x2="372" y2="117" stroke="#2b50e0" stroke-width="3" marker-end="url(#aw)"/>
+  <line x1="526" y1="117" x2="580" y2="117" stroke="#2b50e0" stroke-width="3" marker-end="url(#aw)"/>
+  <circle cx="161" cy="70" r="10" fill="#2b50e0"/><text class="num" x="161" y="74">1</text>
+  <text class="lb" x="161" y="58">80/443만</text>
+  <circle cx="553" cy="70" r="10" fill="#2b50e0"/><text class="num" x="553" y="74">2</text>
+  <text class="lb" x="553" y="58">여러 랙 노드로 분산</text>
+
+  <!-- ⑤ 혼잡 시 -->
+  <circle cx="451" cy="172" r="10" fill="#d98a1c"/><text class="num" x="451" y="176">5</text>
+  <text class="lb" x="451" y="198">막히면 큐별 대역 보장</text>
+
+  <!-- ③ 스토리지: 워커 아래에서 Ceph로 (패브릭을 지나지만 방화벽은 안 거침) -->
+  <path d="M653 146 C 653 200, 834 200, 834 150" fill="none" stroke="#7a5cd6" stroke-width="3" marker-end="url(#as)"/>
+  <circle cx="744" cy="190" r="10" fill="#7a5cd6"/><text class="num" x="744" y="194">3</text>
+  <text class="lb" x="744" y="216">전용 NIC · VLAN 120 · MTU 9000</text>
+  <text class="lb" x="744" y="232">방화벽을 거치지 않음</text>
+
+  <!-- ④ 복제 -->
+  <line x1="878" y1="117" x2="898" y2="117" stroke="#4c3a99" stroke-width="3" marker-end="url(#ar)"/>
+  <circle cx="888" cy="190" r="10" fill="#4c3a99"/><text class="num" x="888" y="194">4</text>
+  <line x1="888" y1="180" x2="888" y2="124" stroke="#4c3a99" stroke-width="1" stroke-dasharray="2 3"/>
+  <text class="lb" x="912" y="216">별도 NIC · VLAN 130</text>
+  <text class="lb" x="912" y="232">밖으로 나가는 길 없음</text>
+
+  <!-- ⑥ 관리 -->
+  <rect x="20" y="268" width="112" height="44" rx="8" fill="#fff" stroke="#8a919c" stroke-width="1.5"/><text x="76" y="295" font-size="13" font-weight="700" fill="#333a45" text-anchor="middle">관리자</text>
+  <rect x="190" y="268" width="128" height="44" rx="8" fill="#fff" stroke="#8a919c" stroke-width="1.5"/><text x="254" y="295" font-size="13" font-weight="700" fill="#333a45" text-anchor="middle">VPN · 배스천</text>
+  <rect x="376" y="268" width="606" height="44" rx="8" fill="#f5f6f8" stroke="#8a919c" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="679" y="295" font-size="13" font-weight="700" fill="#333a45" text-anchor="middle">관리망(OOB) — 모든 장비의 관리 포트와 서버 BMC</text>
+  <line x1="132" y1="290" x2="186" y2="290" stroke="#8a919c" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#am)"/>
+  <line x1="318" y1="290" x2="372" y2="290" stroke="#8a919c" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#am)"/>
+  <circle cx="161" cy="258" r="10" fill="#8a919c"/><text class="num" x="161" y="262">6</text>
+</svg>

@@ -1,0 +1,34 @@
+# 방화벽 정책 원장. 위에서부터 순서대로 평가하고, 맞는 규칙이 없으면 default로 처리한다.
+# 랩에서는 nftables로, 운영 장비에서는 벤더 API(Ansible 모듈)로 같은 원장을 밀어 넣는다.
+
+zones:
+  outside: "인터넷 (ISP 2회선)"
+  prod:    "PROD VRF — K8s 노드, LB VIP"
+  storage: "STORAGE VRF — Ceph public"
+  mgmt:    "관리망 — 배스천, NetBox, Prometheus"
+  # REPL VRF는 방화벽과 연결 자체가 없다
+
+objects:
+  lb_vip:     10.10.32.0/24
+  k8s_node:   10.10.16.0/24
+  ceph_pub:   10.10.20.0/24
+  mgmt_hosts: 10.10.10.0/24
+
+nat:
+  dnat:
+    - {public: 203.0.113.10, proto: tcp, ports: [80, 443], to: 10.10.32.10, desc: "웹 서비스 공개 IP → Ingress VIP"}
+  snat:
+    - {from: prod, to: outside, desc: "노드 아웃바운드 (이미지 pull 등)"}
+
+rules:
+  - {id: 10, from: outside, to: prod,    dst: lb_vip,     proto: tcp,  ports: [80, 443],             action: accept, desc: "서비스 공개는 VIP의 80/443만"}
+  - {id: 20, from: prod,    to: outside,                  proto: tcp,  ports: [80, 443],             action: accept, desc: "레지스트리, 패키지 저장소"}
+  - {id: 21, from: prod,    to: outside,                  proto: udp,  ports: [53, 123],             action: accept, desc: "DNS, NTP"}
+  - {id: 30, from: mgmt,    to: prod,                     proto: tcp,  ports: [22, 6443, 9100, 9115, 10250], action: accept, desc: "SSH, kube-apiserver, node_exporter, 경로 프로브, kubelet"}
+  - {id: 31, from: mgmt,    to: storage,                  proto: tcp,  ports: [22, 9100, 9283],      action: accept, desc: "SSH, node_exporter, ceph-mgr exporter"}
+  - {id: 32, from: mgmt,    to: [prod, storage],          proto: icmp,                               action: accept, desc: "진단용 ping"}
+  - {id: 90, from: prod,    to: storage,                                                             action: drop,   log: true, desc: "스토리지는 전용 다리(VLAN 120)로만 붙는다"}
+  - {id: 91, from: storage, to: outside,                                                             action: drop,   log: true, desc: "스토리지 노드는 인터넷에 직접 나가지 않는다"}
+  - {id: 92, from: outside, to: [storage, mgmt],                                                     action: drop,   log: true, desc: "외부에서 내부 관리·스토리지 직접 접근 차단"}
+
+default: drop

@@ -1,0 +1,17 @@
+<svg viewBox="0 0 1000 230" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <style>.w{fill:#fff;font-weight:700;text-anchor:middle;font-size:12.5px}.n{font-size:11px;fill:#8a919c;text-anchor:middle}</style>
+  <rect x="20" y="20" width="440" height="190" rx="10" fill="#f5f6f8" stroke="#dfe3e8"/>
+  <text x="240" y="44" text-anchor="middle" font-size="13" font-weight="700">프론트엔드 = 기존 패브릭</text>
+  <rect x="60" y="62" width="360" height="36" rx="6" fill="#149a86"/><text class="w" x="240" y="85">스파인·리프 (EVPN, 지금 설계 그대로)</text>
+  <text x="240" y="125" class="n">GPU 노드당 2×100G: K8s 관리, 데이터 적재, 체크포인트, 추론 서비스</text>
+  <text x="240" y="145" class="n">새 VRF(AI) 추가, 스파인 남은 26포트 사용</text>
+  <text x="240" y="165" class="n">스토리지 I/O는 기존 STORAGE VRF 또는 전용 고속 스토리지</text>
+  <rect x="540" y="20" width="440" height="190" rx="10" fill="#fdf7ee" stroke="#f0c98a"/>
+  <text x="760" y="44" text-anchor="middle" font-size="13" font-weight="700">백엔드 = GPU 전용 패브릭 (신규)</text>
+  <rect x="580" y="62" width="360" height="36" rx="6" fill="#d98a1c"/><text class="w" x="760" y="85">레일 최적화 리프 + 스파인, 400G</text>
+  <text x="760" y="125" class="n">GPU 1개당 400G NIC 1개, 같은 번호 GPU끼리 같은 리프(레일)</text>
+  <text x="760" y="145" class="n">RoCEv2 + PFC(무손실 큐) + ECN/DCQCN, 과가입 1:1</text>
+  <text x="760" y="165" class="n">순수 L3, 대역 10.30.0.0/16 (예약해 둠), 외부와 연결 없음</text>
+  <line x1="460" y1="115" x2="540" y2="115" stroke="#8a919c" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="500" y="108" class="n">GPU 노드</text>
+</svg>

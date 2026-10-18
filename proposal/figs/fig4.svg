@@ -1,0 +1,17 @@
+<svg viewBox="0 0 1000 220" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <style>.b{font-size:12.5px;font-weight:700;fill:#fff;text-anchor:middle}.s{font-size:10.5px;fill:#fff;text-anchor:middle}.a{stroke:#8a919c;stroke-width:2;marker-end:url(#ar)}</style>
+  <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a919c"/></marker></defs>
+  <rect x="10" y="70" width="140" height="70" rx="8" fill="#4f46e5"/><text class="b" x="80" y="98">원장 (Git)</text><text class="s" x="80" y="116">site.yml</text><text class="s" x="80" y="130">fw-policy.yml</text>
+  <rect x="190" y="70" width="140" height="70" rx="8" fill="#149a86"/><text class="b" x="260" y="98">점검·생성</text><text class="s" x="260" y="116">netgen validate</text><text class="s" x="260" y="130">netgen build</text>
+  <rect x="370" y="70" width="140" height="70" rx="8" fill="#7a5cd6"/><text class="b" x="440" y="98">사전 검증</text><text class="s" x="440" y="116">containerlab</text><text class="s" x="440" y="130">test.sh</text>
+  <rect x="550" y="70" width="140" height="70" rx="8" fill="#d98a1c"/><text class="b" x="620" y="98">리뷰·승인</text><text class="s" x="620" y="116">변경 요청</text><text class="s" x="620" y="130">차이 확인</text>
+  <rect x="730" y="70" width="120" height="70" rx="8" fill="#d6364f"/><text class="b" x="790" y="98">배포</text><text class="s" x="790" y="116">1대 먼저</text><text class="s" x="790" y="130">→ 한 대씩</text>
+  <rect x="880" y="70" width="110" height="70" rx="8" fill="#1f9d55"/><text class="b" x="935" y="98">사후 점검</text><text class="s" x="935" y="116">check-fabric</text><text class="s" x="935" y="130">알람 확인</text>
+  <line class="a" x1="150" y1="105" x2="188" y2="105"/><line class="a" x1="330" y1="105" x2="368" y2="105"/><line class="a" x1="510" y1="105" x2="548" y2="105"/><line class="a" x1="690" y1="105" x2="728" y2="105"/><line class="a" x1="850" y1="105" x2="878" y2="105"/>
+  <text x="260" y="170" font-size="11" fill="#8a919c" text-anchor="middle">→ 스위치 설정, IP 표, 배선표,</text>
+  <text x="260" y="185" font-size="11" fill="#8a919c" text-anchor="middle">NetBox 데이터, 모니터링 대상</text>
+  <text x="790" y="170" font-size="11" fill="#8a919c" text-anchor="middle">실패하면 다음 장비로</text>
+  <text x="790" y="185" font-size="11" fill="#8a919c" text-anchor="middle">진행하지 않음</text>
+  <path d="M935 140 C 935 205, 80 215, 80 142" fill="none" stroke="#c4cad3" stroke-dasharray="5 4" stroke-width="1.5" marker-end="url(#ar)"/>
+  <text x="500" y="45" font-size="11" fill="#8a919c" text-anchor="middle">매일 실제 설정을 백업해 생성물과 비교, 누가 손으로 고쳤으면 티켓</text>
+</svg>

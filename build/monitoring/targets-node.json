@@ -1,0 +1,122 @@
+[
+  {
+    "targets": [
+      "10.10.16.11:9100"
+    ],
+    "labels": {
+      "node": "ctrl1",
+      "role": "controller",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.16.12:9100"
+    ],
+    "labels": {
+      "node": "ctrl2",
+      "role": "controller",
+      "rack": "R2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.16.13:9100"
+    ],
+    "labels": {
+      "node": "ctrl3",
+      "role": "controller",
+      "rack": "R3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.16.21:9100"
+    ],
+    "labels": {
+      "node": "wrk1",
+      "role": "worker",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.16.22:9100"
+    ],
+    "labels": {
+      "node": "wrk2",
+      "role": "worker",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.16.23:9100"
+    ],
+    "labels": {
+      "node": "wrk3",
+      "role": "worker",
+      "rack": "R2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.16.24:9100"
+    ],
+    "labels": {
+      "node": "wrk4",
+      "role": "worker",
+      "rack": "R2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.16.25:9100"
+    ],
+    "labels": {
+      "node": "wrk5",
+      "role": "worker",
+      "rack": "R3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.20.31:9100"
+    ],
+    "labels": {
+      "node": "ceph1",
+      "role": "ceph",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.20.32:9100"
+    ],
+    "labels": {
+      "node": "ceph2",
+      "role": "ceph",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.20.33:9100"
+    ],
+    "labels": {
+      "node": "ceph3",
+      "role": "ceph",
+      "rack": "R2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.20.34:9100"
+    ],
+    "labels": {
+      "node": "ceph4",
+      "role": "ceph",
+      "rack": "R3"
+    }
+  }
+]

@@ -1,0 +1,20 @@
+! {{ name }} — K8s 노드의 BGP 스피커 역할 (운영에서는 Cilium BGP Control Plane)
+frr version 10.2
+frr defaults datacenter
+hostname {{ name }}
+log stdout informational
+service integrated-vtysh-config
+!
+router bgp {{ k8s_asn }}
+ bgp router-id 10.10.16.{{ host }}
+ no bgp ebgp-requires-policy
+ neighbor {{ gw }} remote-as external
+ neighbor {{ gw }} timers 3 9
+ !
+ address-family ipv4 unicast
+{% if vip %}
+  network {{ vip }}/32
+{% endif %}
+ exit-address-family
+exit
+!

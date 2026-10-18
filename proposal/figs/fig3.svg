@@ -1,0 +1,18 @@
+<svg viewBox="0 0 1000 300" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <style>.z{font-size:13px;font-weight:700;fill:#fff;text-anchor:middle}.d{font-size:11px;fill:#fff;text-anchor:middle}.e{font-size:11px;fill:#8a919c;text-anchor:middle}</style>
+  <rect x="400" y="110" width="200" height="80" rx="8" fill="#d6364f"/><text class="z" x="500" y="145">방화벽 (HA)</text><text class="d" x="500" y="165">존 기반 정책 · 기본 차단</text>
+  <rect x="30" y="20" width="230" height="70" rx="8" fill="#8a919c"/><text class="z" x="145" y="50">OUTSIDE</text><text class="d" x="145" y="70">ISP 2회선 · 공인 203.0.113.0/28</text>
+  <rect x="30" y="210" width="230" height="70" rx="8" fill="#262b33"/><text class="z" x="145" y="240">MGMT (물리 분리)</text><text class="d" x="145" y="260">OOB · BMC · 배스천 · NetBox</text>
+  <rect x="740" y="10" width="230" height="78" rx="8" fill="#3d4756"/><text class="z" x="855" y="38">PROD VRF</text><text class="d" x="855" y="56">K8s 노드 10.10.16.0/24</text><text class="d" x="855" y="72">LB VIP 10.10.32.0/24</text>
+  <rect x="740" y="111" width="230" height="78" rx="8" fill="#7a5cd6"/><text class="z" x="855" y="140">STORAGE VRF</text><text class="d" x="855" y="158">Ceph public 10.10.20.0/24</text>
+  <rect x="740" y="212" width="230" height="78" rx="8" fill="#4c3a99"/><text class="z" x="855" y="241">REPL VRF</text><text class="d" x="855" y="259">Ceph cluster 10.10.24.0/24</text><text class="d" x="855" y="275">방화벽 연결 없음</text>
+  <g stroke="#d6364f" stroke-width="2.2" fill="none">
+    <line x1="260" y1="55" x2="400" y2="130"/><line x1="260" y1="245" x2="400" y2="170"/>
+    <line x1="600" y1="130" x2="740" y2="50"/><line x1="600" y1="150" x2="740" y2="150"/>
+  </g>
+  <line x1="855" y1="88" x2="855" y2="111" stroke="#7a5cd6" stroke-width="3"/>
+  <text x="915" y="104" font-size="10" fill="#7a5cd6">워커 bond1 직결</text>
+  <line x1="600" y1="170" x2="740" y2="250" stroke="#dfe3e8" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="680" y="225" class="e">연결 안 함</text>
+  <text x="680" y="88" class="e">transit VLAN 901</text><text x="680" y="143" class="e">transit VLAN 902</text>
+</svg>

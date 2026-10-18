@@ -1,0 +1,217 @@
+# 생성물 (tools/netgen.py). 운영 설계에서 fw2, OOB 스위치, ISP는 뺐다
+# 방화벽 바깥에 인터넷 사용자(inet), 관리 존에 배스천(bastion)을 하나씩 붙였다
+name: elice
+mgmt:
+  network: elice-mgmt
+  ipv4-subnet: 172.30.30.0/24
+topology:
+  nodes:
+    spine1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/spine1/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+    spine2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/spine2/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+    leaf1a:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/leaf1a/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/leaf1a/interfaces.sh:/interfaces.sh
+    leaf1b:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/leaf1b/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/leaf1b/interfaces.sh:/interfaces.sh
+    leaf2a:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/leaf2a/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/leaf2a/interfaces.sh:/interfaces.sh
+    leaf2b:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/leaf2b/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/leaf2b/interfaces.sh:/interfaces.sh
+    leaf3a:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/leaf3a/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/leaf3a/interfaces.sh:/interfaces.sh
+    leaf3b:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/leaf3b/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/leaf3b/interfaces.sh:/interfaces.sh
+    ctrl1:
+      kind: linux
+      image: hospnet-host
+      binds:
+        - generated/ctrl1/setup.sh:/setup.sh
+    ctrl2:
+      kind: linux
+      image: hospnet-host
+      binds:
+        - generated/ctrl2/setup.sh:/setup.sh
+    ctrl3:
+      kind: linux
+      image: hospnet-host
+      binds:
+        - generated/ctrl3/setup.sh:/setup.sh
+    wrk1:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/wrk1/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/wrk1/setup.sh:/setup.sh
+    wrk2:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/wrk2/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/wrk2/setup.sh:/setup.sh
+    wrk3:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/wrk3/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/wrk3/setup.sh:/setup.sh
+    wrk4:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/wrk4/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/wrk4/setup.sh:/setup.sh
+    wrk5:
+      kind: linux
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/wrk5/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/wrk5/setup.sh:/setup.sh
+    ceph1:
+      kind: linux
+      image: hospnet-host
+      binds:
+        - generated/ceph1/setup.sh:/setup.sh
+    ceph2:
+      kind: linux
+      image: hospnet-host
+      binds:
+        - generated/ceph2/setup.sh:/setup.sh
+    ceph3:
+      kind: linux
+      image: hospnet-host
+      binds:
+        - generated/ceph3/setup.sh:/setup.sh
+    ceph4:
+      kind: linux
+      image: hospnet-host
+      binds:
+        - generated/ceph4/setup.sh:/setup.sh
+    fw1:
+      kind: linux
+      image: fwlab-fw
+      entrypoint: sleep infinity
+      binds:
+        - generated/fw1/rules.nft:/rules.nft
+        - fw1-setup.sh:/setup.sh
+    inet:
+      kind: linux
+      image: hospnet-host
+    bastion:
+      kind: linux
+      image: hospnet-host
+  links:
+    - endpoints: ["leaf1a:eth49", "spine1:eth1"]
+    - endpoints: ["leaf1a:eth50", "spine2:eth1"]
+    - endpoints: ["leaf1b:eth49", "spine1:eth2"]
+    - endpoints: ["leaf1b:eth50", "spine2:eth2"]
+    - endpoints: ["leaf2a:eth49", "spine1:eth3"]
+    - endpoints: ["leaf2a:eth50", "spine2:eth3"]
+    - endpoints: ["leaf2b:eth49", "spine1:eth4"]
+    - endpoints: ["leaf2b:eth50", "spine2:eth4"]
+    - endpoints: ["leaf3a:eth49", "spine1:eth5"]
+    - endpoints: ["leaf3a:eth50", "spine2:eth5"]
+    - endpoints: ["leaf3b:eth49", "spine1:eth6"]
+    - endpoints: ["leaf3b:eth50", "spine2:eth6"]
+    - endpoints: ["ctrl1:eth1", "leaf1a:eth1"]
+    - endpoints: ["ctrl1:eth2", "leaf1b:eth1"]
+    - endpoints: ["ctrl2:eth1", "leaf2a:eth1"]
+    - endpoints: ["ctrl2:eth2", "leaf2b:eth1"]
+    - endpoints: ["ctrl3:eth1", "leaf3a:eth1"]
+    - endpoints: ["ctrl3:eth2", "leaf3b:eth1"]
+    - endpoints: ["wrk1:eth1", "leaf1a:eth2"]
+    - endpoints: ["wrk1:eth2", "leaf1b:eth2"]
+    - endpoints: ["wrk1:eth3", "leaf1a:eth3"]
+    - endpoints: ["wrk1:eth4", "leaf1b:eth3"]
+    - endpoints: ["wrk2:eth1", "leaf1a:eth4"]
+    - endpoints: ["wrk2:eth2", "leaf1b:eth4"]
+    - endpoints: ["wrk2:eth3", "leaf1a:eth5"]
+    - endpoints: ["wrk2:eth4", "leaf1b:eth5"]
+    - endpoints: ["wrk3:eth1", "leaf2a:eth2"]
+    - endpoints: ["wrk3:eth2", "leaf2b:eth2"]
+    - endpoints: ["wrk3:eth3", "leaf2a:eth3"]
+    - endpoints: ["wrk3:eth4", "leaf2b:eth3"]
+    - endpoints: ["wrk4:eth1", "leaf2a:eth4"]
+    - endpoints: ["wrk4:eth2", "leaf2b:eth4"]
+    - endpoints: ["wrk4:eth3", "leaf2a:eth5"]
+    - endpoints: ["wrk4:eth4", "leaf2b:eth5"]
+    - endpoints: ["wrk5:eth1", "leaf3a:eth2"]
+    - endpoints: ["wrk5:eth2", "leaf3b:eth2"]
+    - endpoints: ["wrk5:eth3", "leaf3a:eth3"]
+    - endpoints: ["wrk5:eth4", "leaf3b:eth3"]
+    - endpoints: ["ceph1:eth1", "leaf1a:eth6"]
+    - endpoints: ["ceph1:eth2", "leaf1b:eth6"]
+    - endpoints: ["ceph1:eth3", "leaf1a:eth7"]
+    - endpoints: ["ceph1:eth4", "leaf1b:eth7"]
+    - endpoints: ["ceph2:eth1", "leaf1a:eth8"]
+    - endpoints: ["ceph2:eth2", "leaf1b:eth8"]
+    - endpoints: ["ceph2:eth3", "leaf1a:eth9"]
+    - endpoints: ["ceph2:eth4", "leaf1b:eth9"]
+    - endpoints: ["ceph3:eth1", "leaf2a:eth6"]
+    - endpoints: ["ceph3:eth2", "leaf2b:eth6"]
+    - endpoints: ["ceph3:eth3", "leaf2a:eth7"]
+    - endpoints: ["ceph3:eth4", "leaf2b:eth7"]
+    - endpoints: ["ceph4:eth1", "leaf3a:eth4"]
+    - endpoints: ["ceph4:eth2", "leaf3b:eth4"]
+    - endpoints: ["ceph4:eth3", "leaf3a:eth5"]
+    - endpoints: ["ceph4:eth4", "leaf3b:eth5"]
+    - endpoints: ["fw1:eth1", "leaf1a:eth47"]
+    - endpoints: ["fw1:eth2", "leaf1b:eth47"]
+    - endpoints: ["fw1:eth3", "inet:eth1"]
+    - endpoints: ["fw1:eth4", "bastion:eth1"]

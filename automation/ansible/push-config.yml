@@ -1,0 +1,49 @@
+# 생성된 frr.conf를 장비에 반영한다. 반드시 --check --diff(차이만 보기)로 먼저 돌리고 리뷰 후 적용
+#   ansible-playbook -i <인벤토리> push-config.yml --check --diff -l leaf3a   (차이 확인)
+#   ansible-playbook -i <인벤토리> push-config.yml -l leaf3a                  (카나리 1대 적용)
+#   ansible-playbook -i <인벤토리> push-config.yml                            (나머지, 한 대씩)
+# 적용은 frr-reload.py로 바뀐 줄만 넣는다 (데몬 재시작 없음, 세션 유지)
+- name: FRR 설정 반영
+  hosts: spine:leaf
+  gather_facts: false
+  serial: 1                      # 한 번에 한 대. 실패하면 거기서 멈춘다
+  max_fail_percentage: 0
+  vars:
+    src: "{{ config_dir | default(playbook_dir + '/../../build/configs') }}/{{ inventory_hostname }}/frr.conf"
+  tasks:
+    - name: 문법 검사용 후보 업로드
+      ansible.builtin.copy:
+        src: "{{ src }}"
+        dest: /tmp/frr.conf.candidate
+        mode: "0644"
+      check_mode: false
+      diff: false
+
+    - name: 문법 검사 (틀리면 여기서 중단)
+      ansible.builtin.command: vtysh -C -f /tmp/frr.conf.candidate
+      changed_when: false
+      check_mode: false
+
+    - name: 설정 파일 교체 (--diff로 바뀐 줄이 보인다)
+      ansible.builtin.copy:
+        src: "{{ src }}"
+        dest: /etc/frr/frr.conf
+        mode: "0644"
+        backup: true             # 직전 설정을 장비에 남겨 즉시 되돌릴 수 있게
+        unsafe_writes: true      # 랩 컨테이너는 이 파일이 바인드 마운트라 원자적 교체가 안 된다
+      register: cfg
+
+    - name: 적용 (바뀐 줄만)
+      ansible.builtin.command: /usr/lib/frr/frr-reload.py --reload /etc/frr/frr.conf
+      when: cfg.changed and not ansible_check_mode
+
+    - name: 적용 후 BGP 세션이 기대값으로 돌아왔는지 (아니면 다음 장비로 넘어가지 않음)
+      ansible.builtin.command: vtysh -c "show bgp summary json"
+      register: bgp
+      changed_when: false
+      check_mode: false
+      retries: 10
+      delay: 3
+      until: >-
+        (bgp.stdout | from_json).ipv4Unicast.peers | dict2items
+        | selectattr('value.state', 'equalto', 'Established') | list | length >= bgp_expected | int

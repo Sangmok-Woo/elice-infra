@@ -1,0 +1,50 @@
+all:
+  children:
+    spine:
+      hosts:
+        spine1:
+          ansible_host: clab-elice-spine1
+          bgp_expected: 6
+          ansible_connection: community.docker.docker
+        spine2:
+          ansible_host: clab-elice-spine2
+          bgp_expected: 6
+          ansible_connection: community.docker.docker
+    leaf:
+      hosts:
+        leaf1a:
+          ansible_host: clab-elice-leaf1a
+          bgp_expected: 2
+          vtep: 10.10.1.11
+          border: true
+          ansible_connection: community.docker.docker
+        leaf1b:
+          ansible_host: clab-elice-leaf1b
+          bgp_expected: 2
+          vtep: 10.10.1.12
+          border: true
+          ansible_connection: community.docker.docker
+        leaf2a:
+          ansible_host: clab-elice-leaf2a
+          bgp_expected: 2
+          vtep: 10.10.1.13
+          border: true
+          ansible_connection: community.docker.docker
+        leaf2b:
+          ansible_host: clab-elice-leaf2b
+          bgp_expected: 2
+          vtep: 10.10.1.14
+          border: true
+          ansible_connection: community.docker.docker
+        leaf3a:
+          ansible_host: clab-elice-leaf3a
+          bgp_expected: 2
+          vtep: 10.10.1.15
+          border: false
+          ansible_connection: community.docker.docker
+        leaf3b:
+          ansible_host: clab-elice-leaf3b
+          bgp_expected: 2
+          vtep: 10.10.1.16
+          border: false
+          ansible_connection: community.docker.docker

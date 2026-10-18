@@ -1,0 +1,61 @@
+# 패브릭 상태 점검. 변경 전후, 그리고 매일 정기 실행한다
+#   ansible-playbook -i ../../build/ansible/hosts.yml check-fabric.yml          (운영)
+#   ansible-playbook -i ../../lab/generated/ansible-hosts.yml check-fabric.yml  (랩)
+# 기대 세션 수(bgp_expected)는 인벤토리 생성기가 site.yml에서 계산해 넣는다
+- name: 언더레이 BGP 세션 수
+  hosts: spine:leaf
+  gather_facts: false
+  tasks:
+    - name: BGP 요약 수집
+      ansible.builtin.command: vtysh -c "show bgp summary json"
+      register: bgp
+      changed_when: false
+
+    - name: Established 세션이 기대값 이상인가
+      vars:
+        peers: "{{ (bgp.stdout | from_json).ipv4Unicast.peers }}"
+        up: "{{ peers | dict2items | selectattr('value.state', 'equalto', 'Established') | list | length }}"
+      ansible.builtin.assert:
+        that: up | int >= bgp_expected | int
+        fail_msg: "{{ inventory_hostname }}: BGP {{ up }}/{{ bgp_expected }} — 끊긴 이웃 {{ peers | dict2items | rejectattr('value.state', 'equalto', 'Established') | map(attribute='key') | list }}"
+        success_msg: "{{ inventory_hostname }}: BGP {{ up }}/{{ bgp_expected }}"
+        quiet: true
+
+- name: EVPN VNI마다 원격 VTEP이 보이는가
+  hosts: leaf
+  gather_facts: false
+  tasks:
+    - name: VNI 목록 수집
+      ansible.builtin.command: vtysh -c "show evpn vni json"
+      register: vni
+      changed_when: false
+
+    - name: L2VNI에 원격 VTEP이 하나 이상
+      vars:
+        l2: "{{ (vni.stdout | from_json) | dict2items | selectattr('value.type', 'equalto', 'L2') | list }}"
+        lonely: "{{ l2 | selectattr('value.numRemoteVteps', 'equalto', 0) | map(attribute='key') | list }}"
+      ansible.builtin.assert:
+        that: lonely | length == 0
+        fail_msg: "{{ inventory_hostname }}: 원격 VTEP 없는 VNI {{ lonely }}"
+        success_msg: "{{ inventory_hostname }}: L2VNI {{ l2 | length }}개 정상"
+        quiet: true
+
+- name: 다른 리프까지 ECMP 경로가 스파인 수만큼 있는가 (제안서 3-1, 3-6)
+  hosts: leaf
+  gather_facts: false
+  tasks:
+    - name: BGP로 받은 경로 수집
+      ansible.builtin.command: ip -j route show proto bgp
+      register: rt
+      changed_when: false
+
+    - name: 다른 리프 VTEP마다 다음 홉 2개
+      vars:
+        routes: "{{ rt.stdout | from_json }}"
+        others: "{{ groups['leaf'] | difference([inventory_hostname]) | map('extract', hostvars, 'vtep') | list }}"
+        multi: "{{ routes | selectattr('dst', 'in', others) | selectattr('nexthops', 'defined') | map(attribute='dst') | list }}"
+      ansible.builtin.assert:
+        that: others | difference(multi) | length == 0
+        fail_msg: "{{ inventory_hostname }}: 경로가 한 갈래뿐인 리프 {{ others | difference(multi) }}"
+        success_msg: "{{ inventory_hostname }}: 리프 {{ others | length }}개 모두 ECMP"
+        quiet: true

@@ -1,0 +1,39 @@
+# wrk4 (worker) — inventory/site.yml 에서 생성
+# bond 링크 두 줄은 같은 랙의 리프 a/b에 하나씩 꽂혀 있다 (리프 쪽은 EVPN ESI-LAG)
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens1f0: {mtu: 1500}
+    ens1f1: {mtu: 1500}
+    ens2f0: {mtu: 9000}
+    ens2f1: {mtu: 9000}
+  bonds:
+    bond0:
+      interfaces: [ens1f0, ens1f1]
+      mtu: 1500
+      parameters:
+        mode: 802.3ad
+        lacp-rate: fast
+        transmit-hash-policy: layer3+4
+        mii-monitor-interval: 100
+    bond1:
+      interfaces: [ens2f0, ens2f1]
+      mtu: 9000
+      parameters:
+        mode: 802.3ad
+        lacp-rate: fast
+        transmit-hash-policy: layer3+4
+        mii-monitor-interval: 100
+  vlans:
+    bond0.110:            # K8S-NODE
+      id: 110
+      link: bond0
+      mtu: 1500
+      addresses: [10.10.16.24/24]
+      routes: [{to: default, via: 10.10.16.1}]
+    bond1.120:            # CEPH-PUBLIC
+      id: 120
+      link: bond1
+      mtu: 9000
+      addresses: [10.10.20.24/24]

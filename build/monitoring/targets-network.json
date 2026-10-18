@@ -1,0 +1,132 @@
+[
+  {
+    "targets": [
+      "10.10.8.1"
+    ],
+    "labels": {
+      "device": "spine1",
+      "role": "spine",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.2"
+    ],
+    "labels": {
+      "device": "spine2",
+      "role": "spine",
+      "rack": "R3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.11"
+    ],
+    "labels": {
+      "device": "leaf1a",
+      "role": "leaf",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.12"
+    ],
+    "labels": {
+      "device": "leaf1b",
+      "role": "leaf",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.13"
+    ],
+    "labels": {
+      "device": "leaf2a",
+      "role": "leaf",
+      "rack": "R2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.14"
+    ],
+    "labels": {
+      "device": "leaf2b",
+      "role": "leaf",
+      "rack": "R2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.15"
+    ],
+    "labels": {
+      "device": "leaf3a",
+      "role": "leaf",
+      "rack": "R3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.16"
+    ],
+    "labels": {
+      "device": "leaf3b",
+      "role": "leaf",
+      "rack": "R3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.21"
+    ],
+    "labels": {
+      "device": "oob1",
+      "role": "oob",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.22"
+    ],
+    "labels": {
+      "device": "oob2",
+      "role": "oob",
+      "rack": "R2"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.23"
+    ],
+    "labels": {
+      "device": "oob3",
+      "role": "oob",
+      "rack": "R3"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.31"
+    ],
+    "labels": {
+      "device": "fw1",
+      "role": "firewall",
+      "rack": "R1"
+    }
+  },
+  {
+    "targets": [
+      "10.10.8.32"
+    ],
+    "labels": {
+      "device": "fw2",
+      "role": "firewall",
+      "rack": "R2"
+    }
+  }
+]

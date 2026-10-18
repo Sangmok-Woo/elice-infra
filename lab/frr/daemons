@@ -1,0 +1,24 @@
+# clos-fabric 공용 daemons 파일 (FRR 10.2)
+# 쓰는 데몬만 yes. 나머지는 켜봐야 메모리만 먹는다.
+zebra=yes
+bgpd=yes
+bfdd=yes
+staticd=yes
+ospfd=no
+ospf6d=no
+ripd=no
+ripngd=no
+isisd=no
+pimd=no
+pim6d=no
+ldpd=no
+nhrpd=no
+eigrpd=no
+babeld=no
+sharpd=no
+pbrd=no
+bgpd_options="  -A 127.0.0.1"
+zebra_options="  -A 127.0.0.1 -s 90000000"
+staticd_options="-A 127.0.0.1"
+bfdd_options="  -A 127.0.0.1"
+vtysh_enable=yes

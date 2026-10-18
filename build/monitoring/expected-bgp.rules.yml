@@ -1,0 +1,35 @@
+groups:
+- name: fabric-expected
+  rules:
+  - record: fabric_bgp_expected
+    expr: vector(2)
+    labels:
+      device: leaf1a
+  - record: fabric_bgp_expected
+    expr: vector(2)
+    labels:
+      device: leaf1b
+  - record: fabric_bgp_expected
+    expr: vector(2)
+    labels:
+      device: leaf2a
+  - record: fabric_bgp_expected
+    expr: vector(2)
+    labels:
+      device: leaf2b
+  - record: fabric_bgp_expected
+    expr: vector(2)
+    labels:
+      device: leaf3a
+  - record: fabric_bgp_expected
+    expr: vector(2)
+    labels:
+      device: leaf3b
+  - record: fabric_bgp_expected
+    expr: vector(6)
+    labels:
+      device: spine1
+  - record: fabric_bgp_expected
+    expr: vector(6)
+    labels:
+      device: spine2

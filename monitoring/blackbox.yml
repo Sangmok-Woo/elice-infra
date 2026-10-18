@@ -1,0 +1,16 @@
+# blackbox_exporter 모듈. 경로 프로브는 같은 대상에 두 크기로 보낸다
+modules:
+  icmp_small:
+    prober: icmp
+    timeout: 3s
+    icmp:
+      payload_size: 56
+  icmp_jumbo:
+    prober: icmp
+    timeout: 3s
+    icmp:
+      payload_size: 8972          # 9000 - IP 20 - ICMP 8
+      dont_fragment: true          # 쪼개서 통과하면 MTU 문제를 못 본다
+  http_2xx:
+    prober: http
+    timeout: 5s

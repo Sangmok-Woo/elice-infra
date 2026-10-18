@@ -1,0 +1,95 @@
+# 알람 규칙. severity: page(즉시 호출) / ticket(근무시간 처리)
+groups:
+  - name: fabric
+    rules:
+      # 기대 세션 수는 build/monitoring/expected-bgp.json 값을 recording rule로 넣는다
+      - alert: BgpSessionDown
+        expr: frr_bgp_peer_up == 0
+        for: 30s
+        labels: {severity: page}
+        annotations:
+          summary: "{{ $labels.instance }} BGP 이웃 {{ $labels.peer }} 끊김"
+          runbook: "제안서 3-1 장애 대응 절차"
+
+      # 원장에서 계산한 기대 세션 수보다 적으면 (흐름 1·2의 리프-스파인 구간)
+      - alert: BgpSessionsBelowExpected
+        expr: sum by (device) (frr_bgp_peer_up) < on (device) fabric_bgp_expected
+        for: 30s
+        labels: {severity: page}
+        annotations:
+          summary: "{{ $labels.device }} BGP 세션이 기대값보다 적음"
+          runbook: "제안서 3-1 장애 대응 절차"
+
+      # 작은 ping은 사는데 점보 ping만 죽음 = 경로 어딘가의 MTU 불일치 (흐름 2의 b)
+      - alert: PathMtuBroken
+        expr: |
+          probe_success{job="path-probe-small"} == 1
+            and on (src, dst) probe_success{job="path-probe-jumbo"} == 0
+        for: 1m
+        labels: {severity: page}
+        annotations:
+          summary: "{{ $labels.src }} → {{ $labels.dst }}: 작은 패킷은 가지만 9000바이트는 못 감"
+
+      - alert: InterfaceErrors
+        expr: rate(interface_in_errors_total[5m]) > 1 or rate(interface_in_crc_errors_total[5m]) > 0
+        for: 5m
+        labels: {severity: ticket}
+        annotations:
+          summary: "{{ $labels.instance }} {{ $labels.interface }} 에러 증가 (케이블/광모듈 의심)"
+
+      - alert: OpticRxPowerLow
+        expr: transceiver_rx_power_dbm < -9
+        for: 10m
+        labels: {severity: ticket}
+        annotations:
+          summary: "{{ $labels.instance }} {{ $labels.interface }} 수신 파워 {{ $value }}dBm — 광모듈 교체 준비"
+
+      - alert: UplinkUtilizationHigh
+        expr: |
+          rate(interface_out_octets_total{role="leaf", interface=~"Ethernet(49|5[0-6])"}[5m]) * 8
+            / on(instance, interface) interface_speed_bps > 0.7
+        for: 15m
+        labels: {severity: ticket}
+        annotations:
+          summary: "{{ $labels.instance }} 업링크 70% 초과 15분 — 업링크 증설 검토 (확장 계획 1단계)"
+
+      - alert: PfcStormOrQueueDrops
+        expr: rate(queue_dropped_packets_total{queue=~"3|4"}[5m]) > 0
+        for: 2m
+        labels: {severity: page}
+        annotations:
+          summary: "{{ $labels.instance }} 스토리지/RoCE 큐 드랍 발생"
+
+  - name: servers
+    rules:
+      - alert: BondDegraded
+        expr: node_bonding_active < node_bonding_slaves
+        for: 1m
+        labels: {severity: ticket}
+        annotations:
+          summary: "{{ $labels.node }} {{ $labels.master }} 링크 {{ $value }}개만 활성 — 이중화 상실"
+
+      - alert: NodeNicErrors
+        expr: rate(node_network_receive_errs_total[5m]) > 1
+        for: 5m
+        labels: {severity: ticket}
+
+  - name: storage
+    rules:
+      - alert: CephHealthError
+        expr: ceph_health_status == 2
+        for: 1m
+        labels: {severity: page}
+      - alert: CephOsdDown
+        expr: count(ceph_osd_up == 0) > 0
+        for: 5m
+        labels: {severity: page}
+
+  - name: service
+    rules:
+      - alert: WebDown
+        expr: probe_success{job="blackbox-http"} == 0
+        for: 1m
+        labels: {severity: page}
+        annotations:
+          summary: "외부에서 서비스 접속 실패"

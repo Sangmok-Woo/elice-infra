@@ -1,0 +1,30 @@
+<svg viewBox="0 0 1000 300" width="72%" style="display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+  <style>.t{font-size:12px}.w{fill:#fff;font-weight:700;text-anchor:middle;font-size:12.5px}.c{text-anchor:middle}</style>
+  <!-- 워커 -->
+  <rect x="30" y="20" width="420" height="260" rx="10" fill="#f5f6f8" stroke="#dfe3e8"/>
+  <text x="45" y="42" class="t" font-weight="700">워커 노드 (wrk1)</text>
+  <rect x="60" y="60" width="160" height="60" rx="6" fill="#3d4756"/><text class="w" x="140" y="86">bond0 · 서비스</text><text x="140" y="105" class="c" font-size="11" fill="#e2e8f0">VLAN 110 · 10.10.16.21</text>
+  <rect x="260" y="60" width="160" height="60" rx="6" fill="#7a5cd6"/><text class="w" x="340" y="86">bond1 · 스토리지</text><text x="340" y="105" class="c" font-size="11" fill="#ede7f6">VLAN 120 · 10.10.20.21</text>
+  <rect x="60" y="215" width="80" height="36" rx="6" fill="#149a86"/><text class="w" x="100" y="238">leaf1a</text>
+  <rect x="160" y="215" width="80" height="36" rx="6" fill="#149a86"/><text class="w" x="200" y="238">leaf1b</text>
+  <rect x="260" y="215" width="80" height="36" rx="6" fill="#149a86"/><text class="w" x="300" y="238">leaf1a</text>
+  <rect x="360" y="215" width="80" height="36" rx="6" fill="#149a86"/><text class="w" x="400" y="238">leaf1b</text>
+  <g stroke="#3d4756" stroke-width="2"><line x1="110" y1="120" x2="100" y2="215"/><line x1="170" y1="120" x2="200" y2="215"/></g>
+  <g stroke="#7a5cd6" stroke-width="2"><line x1="310" y1="120" x2="300" y2="215"/><line x1="370" y1="120" x2="400" y2="215"/></g>
+  <text x="150" y="170" class="c t" fill="#8a919c">ens1f0 / ens1f1</text>
+  <text x="350" y="170" class="c t" fill="#8a919c">ens2f0 / ens2f1</text>
+  <text x="240" y="273" class="c" font-size="11" fill="#8a919c">LACP 802.3ad · layer3+4 해시 · 리프 쪽 ESI-LAG</text>
+  <!-- Ceph -->
+  <rect x="550" y="20" width="420" height="260" rx="10" fill="#f5f6f8" stroke="#dfe3e8"/>
+  <text x="565" y="42" class="t" font-weight="700">Ceph 노드 (ceph1)</text>
+  <rect x="580" y="60" width="160" height="60" rx="6" fill="#7a5cd6"/><text class="w" x="660" y="86">bond0 · public</text><text x="660" y="105" class="c" font-size="11" fill="#ede7f6">VLAN 120 · 클라이언트 I/O</text>
+  <rect x="780" y="60" width="160" height="60" rx="6" fill="#4c3a99"/><text class="w" x="860" y="86">bond1 · cluster</text><text x="860" y="105" class="c" font-size="11" fill="#ede7f6">VLAN 130 · 복제·복구</text>
+  <rect x="580" y="215" width="80" height="36" rx="6" fill="#149a86"/><text class="w" x="620" y="238">leaf1a</text>
+  <rect x="680" y="215" width="80" height="36" rx="6" fill="#149a86"/><text class="w" x="720" y="238">leaf1b</text>
+  <rect x="780" y="215" width="80" height="36" rx="6" fill="#149a86"/><text class="w" x="820" y="238">leaf1a</text>
+  <rect x="880" y="215" width="80" height="36" rx="6" fill="#149a86"/><text class="w" x="920" y="238">leaf1b</text>
+  <g stroke="#7a5cd6" stroke-width="2"><line x1="630" y1="120" x2="620" y2="215"/><line x1="690" y1="120" x2="720" y2="215"/></g>
+  <g stroke="#4c3a99" stroke-width="2"><line x1="830" y1="120" x2="820" y2="215"/><line x1="890" y1="120" x2="920" y2="215"/></g>
+  <text x="760" y="170" class="c t" fill="#8a919c">REPL VRF는 방화벽과 연결 없음</text>
+  <text x="760" y="273" class="c" font-size="11" fill="#8a919c">public·cluster 모두 MTU 9000 (패브릭 9216)</text>
+</svg>

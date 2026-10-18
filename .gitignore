@@ -1,0 +1,16 @@
+# 면접 준비 메모 (로컬 전용)
+docs/90-*.md
+
+# 예전 제안서 원고와 작업 중 백업
+proposal/body-before-*.html
+proposal/body-6p.html
+proposal/body-9p.html
+proposal/body-flow14.html
+proposal/proposal-long.html
+proposal/proposal-v1.html
+proposal/style-6p.css
+proposal/part2.html
+proposal/part3.html
+
+__pycache__/
+*.pyc

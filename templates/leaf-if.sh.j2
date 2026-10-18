@@ -1,0 +1,41 @@
+#!/bin/sh
+# {{ name }} 리눅스 데이터플레인 (VRF, L3VNI, VLAN 브리지, VXLAN). 생성물
+# SONiC 장비에서는 같은 내용을 config_db.json(VRF/VLAN/VXLAN_TUNNEL_MAP)으로 넣는다
+set -e
+sysctl -qw net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1 net.ipv4.conf.all.rp_filter=0 net.ipv4.conf.default.rp_filter=0
+# ECMP 해시가 포트까지 보게 한다. 기본값(0)은 주소만 봐서 흐름이 한 스파인으로 쏠린다 (제안서 3-6)
+sysctl -qw net.ipv4.fib_multipath_hash_policy=1
+{% for u in uplinks %}
+ip link set {{ u }} mtu {{ fabric_mtu }} up
+{% endfor %}
+
+# VRF마다 L3VNI 하나 (대칭형 IRB: 다른 서브넷 사이 라우팅은 이 VNI로 넘어간다)
+{% for v in vrfs %}
+ip link add {{ v.name }} type vrf table {{ v.table }}
+ip link set {{ v.name }} up
+ip link add br{{ v.l3vni }} type bridge stp_state 0
+ip link set br{{ v.l3vni }} master {{ v.name }} addrgenmode none
+ip link add vx{{ v.l3vni }} type vxlan id {{ v.l3vni }} local {{ vtep }} dstport 4789 nolearning
+ip link set vx{{ v.l3vni }} master br{{ v.l3vni }} mtu 9000 addrgenmode none
+ip link set vx{{ v.l3vni }} up
+ip link set br{{ v.l3vni }} mtu 9000 up
+{% endfor %}
+
+# VLAN마다 브리지 + L2VNI + 애니캐스트 게이트웨이 (모든 리프가 같은 IP/MAC)
+{% for v in vlans %}
+ip link add br{{ v.id }} type bridge stp_state 0
+ip link set br{{ v.id }} address {{ mac }} master {{ v.vrf }}
+ip link add vx{{ v.vni }} type vxlan id {{ v.vni }} local {{ vtep }} dstport 4789 nolearning
+ip link set vx{{ v.vni }} mtu {{ v.mtu }} master br{{ v.id }} addrgenmode none
+bridge link set dev vx{{ v.vni }} neigh_suppress on learning off
+ip link set vx{{ v.vni }} up
+for p in {{ v.ports | join(' ') }}; do
+  [ -e /sys/class/net/$p ] || continue      # 랩에서 생략한 장비(fw2 등) 쪽 포트
+  ip link set $p mtu {{ fabric_mtu }} up
+  ip link add link $p name $p.{{ v.id }} type vlan id {{ v.id }}
+  ip link set $p.{{ v.id }} mtu {{ v.mtu }} master br{{ v.id }} up
+done
+ip link set br{{ v.id }} mtu {{ v.mtu }} up
+ip addr add {{ v.gw }}/{{ v.plen }} dev br{{ v.id }}
+{% endfor %}
+echo "{{ name }}: VRF {{ vrfs | length }}개, VLAN {{ vlans | map(attribute='id') | join(',') }}"

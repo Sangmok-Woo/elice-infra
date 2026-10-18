@@ -1,0 +1,52 @@
+# 생성물 (tools/netgen.py). 운영 설계에서 fw2, OOB 스위치, ISP는 뺐다
+# 방화벽 바깥에 인터넷 사용자(inet), 관리 존에 배스천(bastion)을 하나씩 붙였다
+name: elice
+mgmt:
+  network: elice-mgmt
+  ipv4-subnet: 172.30.30.0/24
+topology:
+  nodes:
+{% for n, role in nodes.items() %}
+    {{ n }}:
+      kind: linux
+{% if role in ('spine', 'leaf') %}
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/{{ n }}/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+{% if role == 'leaf' %}
+        - generated/{{ n }}/interfaces.sh:/interfaces.sh
+{% endif %}
+{% elif role == 'worker' %}
+      image: quay.io/frrouting/frr:10.2.1
+      binds:
+        - generated/{{ n }}/frr.conf:/etc/frr/frr.conf
+        - frr/daemons:/etc/frr/daemons
+        - frr/vtysh.conf:/etc/frr/vtysh.conf
+        - generated/{{ n }}/setup.sh:/setup.sh
+{% else %}
+      image: hospnet-host
+      binds:
+        - generated/{{ n }}/setup.sh:/setup.sh
+{% endif %}
+{% endfor %}
+    fw1:
+      kind: linux
+      image: fwlab-fw
+      entrypoint: sleep infinity
+      binds:
+        - generated/fw1/rules.nft:/rules.nft
+        - fw1-setup.sh:/setup.sh
+    inet:
+      kind: linux
+      image: hospnet-host
+    bastion:
+      kind: linux
+      image: hospnet-host
+  links:
+{% for l in links %}
+    - endpoints: ["{{ l.a }}:{{ l.ap }}", "{{ l.b }}:{{ l.bp }}"]
+{% endfor %}
+    - endpoints: ["fw1:eth3", "inet:eth1"]
+    - endpoints: ["fw1:eth4", "bastion:eth1"]

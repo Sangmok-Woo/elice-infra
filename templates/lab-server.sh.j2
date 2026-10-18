@@ -1,0 +1,25 @@
+#!/bin/sh
+# {{ name }} ({{ role }}) 랩용 NIC 설정. 생성물
+# 운영 서버는 LACP(802.3ad) + 리프 ESI-LAG. 랩 리프는 ESI를 흉내 내지 않으므로 active-backup으로 대신한다
+set -e
+{% for b in bonds %}
+ip link add {{ b.name }} type bond mode active-backup miimon 100
+{% for n in b.nics %}
+ip link set {{ n }} down
+ip link set {{ n }} master {{ b.name }}
+{% endfor %}
+ip link set {{ b.name }} mtu {{ b.mtu }} up
+{% for v in b.vlans %}
+ip link add link {{ b.name }} name {{ b.name }}.{{ v.id }} type vlan id {{ v.id }}
+ip link set {{ b.name }}.{{ v.id }} mtu {{ v.mtu }} up
+ip addr add {{ v.addr }} dev {{ b.name }}.{{ v.id }}
+{% endfor %}
+{% endfor %}
+ip route del default 2>/dev/null || true
+ip route add default via {{ gw }}
+{% if vip is defined and vip %}
+# Ingress 파드가 떠 있는 노드: VIP를 갖고 BGP로 리프에 광고한다 (Cilium/MetalLB BGP 모드 흉내)
+ip addr add {{ vip }}/32 dev lo
+mkdir -p /srv && echo "served-by {{ name }}" > /srv/index.html
+cd /srv && nohup python3 -m http.server 80 --bind {{ vip }} >/dev/null 2>&1 &
+{% endif %}

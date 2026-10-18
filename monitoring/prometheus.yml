@@ -1,0 +1,90 @@
+# 수집 대상은 손으로 적지 않는다. tools/netgen.py가 site.yml에서 targets-*.json을 만든다
+# 장비가 늘면 site.yml에 한 줄 추가 → build → 이 파일은 그대로
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - alerts.yml
+  - targets/expected-bgp.rules.yml   # tools/netgen.py가 원장에서 생성 (리프 2, 스파인 6)
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+scrape_configs:
+  # 스위치·방화벽: 인터페이스 카운터, 광모듈 온도/수신 파워 (gNMI 스트리밍 → gnmic이 Prometheus 형식으로 내보냄)
+  - job_name: network-gnmi
+    file_sd_configs: [{files: [targets/targets-network.json]}]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: gnmic:9804
+
+  # gNMI를 지원하지 않는 장비(OOB 스위치, PDU)는 SNMP
+  - job_name: network-snmp
+    file_sd_configs: [{files: [targets/targets-network.json]}]
+    metrics_path: /snmp
+    params: {module: [if_mib], auth: [snmpv3]}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: snmp-exporter:9116
+
+  # FRR BGP/EVPN 상태 (스위치에서 frr_exporter 실행)
+  - job_name: frr
+    file_sd_configs: [{files: [targets/targets-network.json]}]
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)
+        replacement: ${1}:9342
+        target_label: __address__
+
+  # 서버 OS: CPU, NIC 에러, bond 상태
+  - job_name: node
+    file_sd_configs: [{files: [targets/targets-node.json]}]
+
+  # 서버 하드웨어: 팬, 전원, 온도 (BMC Redfish)
+  - job_name: bmc
+    file_sd_configs: [{files: [targets/targets-bmc.json]}]
+    metrics_path: /redfish
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: redfish-exporter:9610
+
+  # Ceph (mgr prometheus 모듈)
+  - job_name: ceph
+    static_configs: [{targets: ["10.10.20.31:9283", "10.10.20.33:9283"]}]
+
+  # 경로 프로브: 랙마다 워커 하나에서 blackbox_exporter(hostNetwork)가 다른 랙의 Ceph로
+  # 작은 ping과 점보 ping을 따로 보낸다. 작은 것만 살면 경로 어딘가의 MTU가 어긋난 것 (제안서 3-2)
+  - job_name: path-probe-small
+    metrics_path: /probe
+    params: {module: [icmp_small]}
+    file_sd_configs: [{files: [targets/targets-path-probe.json]}]
+    relabel_configs: &probe_relabel
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [prober]
+        target_label: __address__
+  - job_name: path-probe-jumbo
+    metrics_path: /probe
+    params: {module: [icmp_jumbo]}
+    file_sd_configs: [{files: [targets/targets-path-probe.json]}]
+    relabel_configs: *probe_relabel
+
+  # 서비스 관점 측정: 바깥에서 실제로 웹이 열리는가
+  - job_name: blackbox-http
+    metrics_path: /probe
+    params: {module: [http_2xx]}
+    static_configs: [{targets: ["https://203.0.113.10/healthz"]}]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

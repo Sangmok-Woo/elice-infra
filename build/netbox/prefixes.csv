@@ -1,0 +1,17 @@
+﻿prefix,vrf,vlan,description,status
+10.10.0.0/16,,,site,active
+10.10.0.0/24,,,loopback,active
+10.10.1.0/24,,,vtep,active
+10.10.8.0/24,,,oob_net,active
+10.10.9.0/24,,,oob_bmc,active
+10.10.10.0/24,,,mgmt_svc,active
+10.10.250.0/24,,,fw_transit,active
+10.20.0.0/16,,,pod,active
+10.21.0.0/16,,,service,active
+10.10.32.0/24,,,lb_vip,active
+203.0.113.0/28,,,public,active
+10.10.64.0/18,,,reserved_gpu,active
+10.30.0.0/16,,,reserved_gpu_backend,active
+10.10.16.0/24,PROD,110,K8S-NODE,active
+10.10.20.0/24,STORAGE,120,CEPH-PUBLIC,active
+10.10.24.0/24,REPL,130,CEPH-CLUSTER,active

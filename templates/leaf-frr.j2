@@ -1,0 +1,101 @@
+! {{ name }} — inventory/site.yml 에서 생성. 손으로 고치지 말 것
+frr version 10.2
+frr defaults datacenter
+hostname {{ name }}
+log stdout informational
+service integrated-vtysh-config
+!
+{% for v in vrfs %}
+vrf {{ v.name }}
+ vni {{ v.l3vni }}
+{% if border %}
+{% for t in transit if t.vrf == v.name %}
+ ip route 0.0.0.0/0 {{ t.nh }}
+{% endfor %}
+{% endif %}
+exit-vrf
+!
+{% endfor %}
+interface lo
+ ip address {{ rid }}/32
+ ip address {{ vtep }}/32
+!
+{% for u in uplinks %}
+interface {{ u }}
+ description fabric-uplink
+ ipv6 nd ra-interval 5
+ no ipv6 nd suppress-ra
+!
+{% endfor %}
+! K8s 노드가 광고해도 되는 것은 LB VIP와 노드별 Pod 대역뿐
+ip prefix-list K8S-IN seq 10 permit {{ lb_vip }} le 32
+ip prefix-list K8S-IN seq 20 permit {{ pod }} ge 24 le 24
+ip prefix-list K8S-IN seq 99 deny any
+ip prefix-list DENY-ALL seq 5 deny any
+!
+router bgp {{ asn }}
+ bgp router-id {{ rid }}
+ bgp log-neighbor-changes
+ no bgp ebgp-requires-policy
+ bgp bestpath as-path multipath-relax
+ neighbor FABRIC peer-group
+ neighbor FABRIC remote-as external
+ neighbor FABRIC bfd
+ neighbor FABRIC timers 3 9
+{% for u in uplinks %}
+ neighbor {{ u }} interface peer-group FABRIC
+{% endfor %}
+ !
+ address-family ipv4 unicast
+  network {{ rid }}/32
+  network {{ vtep }}/32
+  maximum-paths 64
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  neighbor FABRIC activate
+  advertise-all-vni
+{% for v in vlans %}
+  vni {{ v.vni }}
+   route-target import {{ rt }}:{{ v.vni }}
+   route-target export {{ rt }}:{{ v.vni }}
+  exit-vni
+{% endfor %}
+ exit-address-family
+exit
+!
+{% for v in vrfs %}
+router bgp {{ asn }} vrf {{ v.name }}
+ bgp router-id {{ rid }}
+ no bgp ebgp-requires-policy
+ bgp bestpath as-path multipath-relax
+{% if v.name == 'PROD' %}
+ neighbor K8S peer-group
+ neighbor K8S remote-as {{ k8s_asn }}
+ neighbor K8S timers 3 9
+ bgp listen range {{ k8s_net }} peer-group K8S
+{% endif %}
+ !
+ address-family ipv4 unicast
+  redistribute connected
+{% if border %}
+  redistribute static
+{% endif %}
+  maximum-paths 64
+{% if v.name == 'PROD' %}
+  neighbor K8S prefix-list K8S-IN in
+  neighbor K8S prefix-list DENY-ALL out
+  neighbor K8S maximum-prefix 300
+{% endif %}
+ exit-address-family
+ !
+ address-family l2vpn evpn
+  advertise ipv4 unicast
+  route-target import {{ rt }}:{{ v.l3vni }}
+  route-target export {{ rt }}:{{ v.l3vni }}
+ exit-address-family
+exit
+!
+{% endfor %}
+line vty
+!

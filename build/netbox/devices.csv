@@ -1,0 +1,26 @@
+﻿name,role,site,rack,device_type,status
+spine1,spine,elice-dc1,R1,32x100G,planned
+spine2,spine,elice-dc1,R3,32x100G,planned
+leaf1a,leaf,elice-dc1,R1,48x25G+8x100G,planned
+leaf1b,leaf,elice-dc1,R1,48x25G+8x100G,planned
+leaf2a,leaf,elice-dc1,R2,48x25G+8x100G,planned
+leaf2b,leaf,elice-dc1,R2,48x25G+8x100G,planned
+leaf3a,leaf,elice-dc1,R3,48x25G+8x100G,planned
+leaf3b,leaf,elice-dc1,R3,48x25G+8x100G,planned
+oob1,oob,elice-dc1,R1,48x1G+4x10G,planned
+oob2,oob,elice-dc1,R2,48x1G+4x10G,planned
+oob3,oob,elice-dc1,R3,48x1G+4x10G,planned
+fw1,firewall,elice-dc1,R1,NGFW (HA active),planned
+fw2,firewall,elice-dc1,R2,NGFW (HA standby),planned
+ctrl1,controller,elice-dc1,R1,1U server,planned
+ctrl2,controller,elice-dc1,R2,1U server,planned
+ctrl3,controller,elice-dc1,R3,1U server,planned
+wrk1,worker,elice-dc1,R1,1U server,planned
+wrk2,worker,elice-dc1,R1,1U server,planned
+wrk3,worker,elice-dc1,R2,1U server,planned
+wrk4,worker,elice-dc1,R2,1U server,planned
+wrk5,worker,elice-dc1,R3,1U server,planned
+ceph1,ceph,elice-dc1,R1,1U server,planned
+ceph2,ceph,elice-dc1,R1,1U server,planned
+ceph3,ceph,elice-dc1,R2,1U server,planned
+ceph4,ceph,elice-dc1,R3,1U server,planned
