@@ -16,7 +16,10 @@ __pycache__/
 *.pyc
 
 # 용어 풀어 쓴 판 (로컬 전용)
-elice-infra-proposal-plain.pdf
 proposal/body-plain.html
 proposal/proposal-plain.html
 proposal/figs/*-plain.svg
+
+# 저장소에는 제안서 PDF 하나(plain 판)만 둔다
+elice-infra-proposal.pdf
+elice-infra-proposal-easy.pdf

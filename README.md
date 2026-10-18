@@ -14,7 +14,7 @@
 
 <br>
 
-### [제안서 PDF](elice-infra-proposal.pdf) · [쉬운 버전](elice-infra-proposal-easy.pdf) · [단계별 문서](docs/00-전체지도.md)
+### [제안서 PDF](elice-infra-proposal-plain.pdf) · [단계별 문서](docs/00-전체지도.md)
 
 <br>
 
