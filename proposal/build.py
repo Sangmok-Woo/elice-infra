@@ -9,7 +9,9 @@ d = Path(__file__).parent
 suffix = "-" + sys.argv[1] if len(sys.argv) > 1 else ""
 body = (d / f"body{suffix}.html").read_text(encoding="utf-8")
 for i in range(1, 9):
-    body = body.replace("{{FIG%d}}" % i, (d / "figs" / f"fig{i}.svg").read_text(encoding="utf-8"))
+    f = d / "figs" / f"fig{i}{suffix}.svg"          # 버전 전용 그림이 있으면 그것을 쓴다
+    f = f if f.exists() else d / "figs" / f"fig{i}.svg"
+    body = body.replace("{{FIG%d}}" % i, f.read_text(encoding="utf-8"))
 css = (d / "style.css").read_text(encoding="utf-8")
 html = f'''<!doctype html>
 <html lang="ko">

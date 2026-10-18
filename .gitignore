@@ -14,3 +14,9 @@ proposal/part3.html
 
 __pycache__/
 *.pyc
+
+# 용어 풀어 쓴 판 (로컬 전용)
+elice-infra-proposal-plain.pdf
+proposal/body-plain.html
+proposal/proposal-plain.html
+proposal/figs/*-plain.svg
